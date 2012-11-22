@@ -16,4 +16,10 @@
 
 ;; Сделать макрос, который создаёт функцию с любым именем
 
-(defmacro
+(defmacro anyname (name)
+  `(defun ,name (x y) (+ x y)))
+
+(macroexpand-1 '(anyname summa))
+
+;; Сделать макрос, создающий макрос
+
