@@ -23,3 +23,11 @@
 
 ;; Сделать макрос, создающий макрос
 
+(defmacro one ()
+  `(defmacro two ()
+     `(defun fun ()
+        (+ 2 3))))
+
+(macroexpand-1 '(one))
+
+(macroexpand-1 '(two))
