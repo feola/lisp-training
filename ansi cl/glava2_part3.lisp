@@ -43,7 +43,7 @@ lst
     (format t "~A ~A~%" i (* i i))))
 
 ;; => SHOW-SQUARES
-;; Переменные функции show-squares - это start и end
+;; Арументы функции show-squares - это start и end
 ;; Для каждого i начиная со start, а затем для i+1
 ;; и далее выполнять проверку - если i меньше end,
 ;; печатается i и i*i, а если i больше end - выводится
