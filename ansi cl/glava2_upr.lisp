@@ -181,7 +181,7 @@
 
 ;; => 13
 
-;; c. (x #’list 1 nil)
+;; c. (x #'list 1 nil)
 ;; (1)
 
 ;; Ответ - apply
@@ -189,4 +189,25 @@
 (apply #'list 1 nil)
 
 ;; => (1)
+
+;;---------------------------------------------------
+;; 7. Определите функцию, проверяющую, является ли списком хотя бы один
+;; элемент списка
+
+(defun there-is-list (lst)
+  (if (listp (car lst))
+      t
+      (if (null (cdr lst))
+          nil
+          (there-is-list (cdr lst)))))
+
+;; => THERE-IS-LIST
+
+(there-is-list '(2 (1 2) 4 7))
+
+;; => T
+
+(there-is-list '(1 два "три"))
+
+;; => NIL
 
