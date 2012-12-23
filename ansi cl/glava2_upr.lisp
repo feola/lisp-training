@@ -238,15 +238,15 @@
       (if (> x 0)
           (progn
             (points-rec (- x 1))
-            (format t "."))
-          nil)
+            (format t ".")
+            'done))
       (format t "это не целое положительное число")))
 
 ;; => POINTS-REC
 
 ;; CL-USER> (points-rec 4)
 ;; ....
-;; NIL
+;; DONE
 
 ;; CL-USER> (points-rec "cat")
 ;; это не целое положительное число
