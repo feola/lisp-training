@@ -252,3 +252,46 @@
 ;; это не целое положительное число
 ;; NIL
 
+;; b. возвращает количество символов а в заданном списке
+
+(defun find-a (lst)
+  (let ((cnt 0))
+    (dolist (obj lst cnt)
+      (if (eql obj 'a)
+          (setf cnt (+ 1 cnt))))))
+
+;; => FIND-A
+
+(find-a '(a f a a))
+
+;; => 3
+
+(find-a '(a f s "a" a e a a))
+
+;; => 4
+
+(find-a '(h))
+
+;; => 0
+
+(defun find-a-rec (lst)
+  (if (null lst)
+      0
+      (if (eql (car lst) 'a)
+          (+ (find-a-rec (cdr lst)) 1)
+          (find-a-rec (cdr lst)))))
+
+;; => FIND-A-REC
+
+(find-a-rec '(a f a a t a a))
+
+;; => 5
+
+(find-a-rec '())
+
+;; => 0
+
+
+
+
+
