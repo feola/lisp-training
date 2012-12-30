@@ -328,9 +328,24 @@
         (summit (cdr lst))
         (+ x (summit (cdr lst))))))
 
-(summit '(1 nil 2))
+;; Не компилируется, так как не задано условие окончания рекурсии
 
-; Над этим ещё надо подумать, пока не понимаю, почему не работает
+;; Наш вариант (работает!):
+
+(defun summit-om (lst)
+  (let ((x (car lst)))
+    (if (null x)
+        (if (null (cdr lst))
+            0
+            (summit-om (cdr lst)))
+        (+ x
+           (if (null (cdr lst))
+               0
+               (summit-om (cdr lst)))))))
+
+(summit-om '(1 nil 2 4 nil 5))
+
+;; => 12
 
 
 
