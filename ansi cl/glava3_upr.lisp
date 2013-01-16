@@ -133,6 +133,8 @@
 
 (a-pos+ '(1 1 1 1))
 
+(trace a-pos+)
+
 ;; => (1 2 3 4)
 
 ;; b - итерация
@@ -244,8 +246,8 @@
 
 ;; => (A (B (C NIL)))
 
-;; Пока получается сделать только список требуемого вида, надо переделать
-;; его в точечную нотацию
+;; Получилось сделать список требуемого вида, но его надо переделать
+;; в точечную нотацию
 
 (defun showdots (lst)
   (format t "(~A . (~A . (~A . NIL)))"
@@ -261,3 +263,49 @@
 
 ;; Упражнение выполнено, но остался вопрос - как сделать, чтобы функция
 ;; работала с любым количеством аргументов?
+
+;;---------------------------------------------------
+;; 9. Напишите программу, которая ищет наиболее длинный путь в сети, не содержащий
+;; повторений. Сеть может содержать циклы
+
+(setf my-net-one '((a b c d) (b c) (c d)))
+
+(setf my-net-two '((a b c) (b c) (c d e) (d e)))
+
+(defun longest-path (start end net)
+  (bfs end (list (list start)) net))
+
+(defun bfs (end queue net)
+  (if (null queue)
+      nil
+      (let ((path (car queue)))
+        (let ((node (car path)))
+          (if (eql node end)
+              (append (reverse (car (cdr queue))) (list end))
+              (bfs end
+                   (append (cdr queue)
+                           (new-paths path node net))
+                   net))))))
+
+(defun new-paths (path node net)
+  (mapcar #'(lambda (n)
+              (cons n path))
+            (cdr (assoc node net))))
+
+(longest-path 'a 'd my-net-one)
+
+;; => (A B C D)
+
+(longest-path 'a 'e my-net-two)
+
+;; => (A B C D E)
+
+;; Примечание: что значит "не содержащий повторений" в описании задания?
+;; В задании сказано, что сеть может содержать циклы - как это?
+;; Это значит, что сеть может быть "закольцована" или что-то другое?
+
+
+
+
+
+
