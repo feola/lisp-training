@@ -250,15 +250,36 @@
 
 (defun my-cons (x y)
   (let ((a '(x . y)))
-    (setf (car a) x)
-    (setf (cdr a) y)
+    (setf (cdr a) x)
+    (setf (car a) y)
     a))
 
 (my-cons 'a 'b)
 
-=> (A . B)
+;; => (B . A)
 
-;; Не очень понятно, что именно нужно сделать
+;; Следующие функции определены без замены car на cdr и наоборот
+
+(let ((x 0))
+  (defun my-length (lst)
+    (if (null lst)
+        x
+        (progn
+          (setf x (+ x 1))
+        (my-length (cdr lst))))))
+
+(my-length '(s d f g))
+
+;; => 4
+
+(defun my-member (elt lst)
+    (if (eql (car lst) elt)
+        (cons elt (cdr lst))
+        (my-member elt (cdr lst))))
+
+(my-member 'n '(r j n e q))
+
+;; => (N E Q)
 
 ;;---------------------------------------------------
 ;; 7. Измените программу так, чтобы она создавала меньшее количество ячеек
@@ -384,8 +405,6 @@
 
 ;; (A . (B . (C . (D . NIL))))
 
- (showdots (make-list 100000 :initial-element 'a))
-
 ;;---------------------------------------------------
 ;; 9. Напишите программу, которая ищет наиболее длинный путь в сети, не содержащий
 ;; повторений. Сеть может содержать циклы
@@ -393,6 +412,8 @@
 (setf my-net-one '((a b c d) (b c) (c d)))
 
 (setf my-net-two '((a b c) (b c) (c d e) (d e)))
+
+(setf my-net-cycle '((a b c d) (b c) (c d) (d a)))
 
 (defun longest-path (start end net)
   (bfs end (list (list start)) net))
@@ -422,12 +443,6 @@
 
 ;; => (A B C D E)
 
-;; Примечание: что значит "не содержащий повторений" в описании задания?
-;; В задании сказано, что сеть может содержать циклы - как это?
-;; Это значит, что сеть может быть "закольцована" или что-то другое?
+(longest-path 'a 'd my-net-cycle)
 
-
-
-
-
-
+;; => (A B C D)
