@@ -102,6 +102,8 @@
                 (occurrences (remove (car lst) lst)))))
     #'(lambda (x y) (> (cdr x) (cdr y)))))
 
+;; => OCCURRENCES
+
 (defun find-rec (term lst)
   (if (null lst)
       0
@@ -109,25 +111,33 @@
           (+ (find-rec term (cdr lst)) 1)
           (find-rec term (cdr lst)))))
 
+;; => FIND-REC
+
 (occurrences '(a c a b b a))
+
+;; => ((A . 3) (B . 2) (C . 1))
 
 ;; Второй вариант (rigidus):
 
+(let ((x))
 (let ((over nil)
       (isset nil))
   (defun reclist (lst)
     (if (null over)
         (setf over lst))
     (if (null lst)
-        'fin
+        (sort x #'(lambda (a b) (> (cdr a) (cdr b))))
         (progn
           (if (not (find (car lst) isset))
               (progn
-                (format t "(~A . ~A)"
-                        (car lst)
-                        (find-rec (car lst) over))
+                (push
+                 (cons
+                  (car lst)
+                  (find-rec (car lst) over)) x)
                 (push (car lst) isset)))
-          (reclist (cdr lst))))))
+          (reclist (cdr lst)))))))
+
+;; => RECLIST
 
 (defun find-rec (term lst)
   (if (null lst)
@@ -136,11 +146,11 @@
           (+ (find-rec term (cdr lst)) 1)
           (find-rec term (cdr lst)))))
 
+;; => FIND-REC
+
 (reclist '(a f a a t a t f f f f f a))
 
-(trace reclist)
-
-(find 'a '(n b))
+;; => ((F . 6) (A . 5) (T . 2))
 
 ;;---------------------------------------------------
 ;; 4. Почему (member '(a) '((a) (b))) возвращает nil?
