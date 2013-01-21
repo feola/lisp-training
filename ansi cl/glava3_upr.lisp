@@ -90,13 +90,57 @@
 ;; 3. Напишите функцию, определяющую количество повторений (с точки зрения eql)
 ;; каждого элемента в заданном списке и сортирующую их по убыванию встречаемости
 
+;; Первый вариант (мой):
+
 (defun occurrences (lst)
+  (sort
+   (remove nil
+           (cons
+            (if (not (null lst))
+                (cons (car lst) (find-rec (car lst) lst)))
+            (if (not (null (cdr lst)))
+                (occurrences (remove (car lst) lst)))))
+    #'(lambda (x y) (> (cdr x) (cdr y)))))
 
-(occurrences '(a b b a b c c a))
+(defun find-rec (term lst)
+  (if (null lst)
+      0
+      (if (eql term (car lst))
+          (+ (find-rec term (cdr lst)) 1)
+          (find-rec term (cdr lst)))))
 
-(trace occurrences)
+(occurrences '(a c a b b a))
 
-;; Пока не получается...
+;; Второй вариант (rigidus):
+
+(let ((over nil)
+      (isset nil))
+  (defun reclist (lst)
+    (if (null over)
+        (setf over lst))
+    (if (null lst)
+        'fin
+        (progn
+          (if (not (find (car lst) isset))
+              (progn
+                (format t "(~A . ~A)"
+                        (car lst)
+                        (find-rec (car lst) over))
+                (push (car lst) isset)))
+          (reclist (cdr lst))))))
+
+(defun find-rec (term lst)
+  (if (null lst)
+      0
+      (if (eql term (car lst))
+          (+ (find-rec term (cdr lst)) 1)
+          (find-rec term (cdr lst)))))
+
+(reclist '(a f a a t a t f f f f f a))
+
+(trace reclist)
+
+(find 'a '(n b))
 
 ;;---------------------------------------------------
 ;; 4. Почему (member '(a) '((a) (b))) возвращает nil?
@@ -161,6 +205,16 @@
 ;;---------------------------------------------------
 ;; 6. Определить функции cons, length и member, считая, что теперь
 ;; cdr указывает на голову списка, а car - на хвост
+
+(defun my-cons (x y)
+  (let ((a '(x . y)))
+    (setf (car a) x)
+    (setf (cdr a) y)
+    a))
+
+(my-cons 'a 'b)
+
+=> (A . B)
 
 ;; Не очень понятно, что именно нужно сделать
 
@@ -261,6 +315,34 @@
 
 ;; Упражнение выполнено, но остался вопрос - как сделать, чтобы функция
 ;; работала с любым количеством аргументов?
+
+(defun showdots (lst)
+  (if (not (null (cdr lst)))
+      (progn
+        (format t "(~A . " (car lst))
+        (showdots (cdr lst))
+        (do ((i (length lst) (- i 1)))
+            ((= i 0)
+             (format t ")"))))
+      (format t "(~A . NIL)" (car lst))))
+
+(showdots '(a b c d))
+
+;; (A . (B . (C . (D . NIL))))
+
+(defun showdots (lst)
+  (if (not (null (cdr lst)))
+      (progn
+        (format t "(~A . " (car lst))
+        (showdots (cdr lst))
+        (format t ")"))
+      (format t "(~A . NIL)" (car lst))))
+
+(showdots '(a b c d))
+
+;; (A . (B . (C . (D . NIL))))
+
+ (showdots (make-list 100000 :initial-element 'a))
 
 ;;---------------------------------------------------
 ;; 9. Напишите программу, которая ищет наиболее длинный путь в сети, не содержащий
