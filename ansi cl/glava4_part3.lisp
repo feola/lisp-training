@@ -200,12 +200,37 @@
 
 ;; => PARSE-MONTH
 
+(parse-date "16 Aug 1980")
+
+;; => (16 8 1980)
+
+(parse-date "24 jan 2013")
+
+;; => (24 1 2013)
+
+;; Здесь используется встроенная функция parse-integer, позволяющая
+;; преобразовать строку в число
+;; Можно отдельно определить эту функцию
+
+(defun read-integer (str)
+  (if (every #'digit-char-p str)
+      (let ((accum 0))
+        (dotimes (pos (length str))
+          (setf accum (+ (* accum 10)
+                         (digit-char-p (char str pos)))))
+        accum)
+      nil))
+
+;; => READ-INTEGER
+
+;; digit-char-p - проверяет, является ли аргумент цифрой, и возвращает цифру,
+;; если это так
 
 
+(read-integer "34")
 
+;; => 34
 
+(read-integer "не цифра")
 
-
-
-
-
+;; => NIL
