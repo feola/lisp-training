@@ -128,8 +128,77 @@
 
 ;; => (A)
 
+;; В этом примере reduce используется для пересечения списков
 
+;;---------------------------------------------------
+;; ПРИМЕР - РАЗБОР ДАТ
+;;---------------------------------------------------
+;; Прграмма должна превращать строку типа "16 Aug 1980" в целые числа,
+;; соответствующие дню, месяцу и году
 
+(defun tokens (str test start)
+  (let ((p1 (position-if test str :start start)))
+    (if p1
+        (let ((p2 (position-if #'(lambda (c)
+                                   (not (funcall test c)))
+                               str :start p1)))
+          (cons (subseq str p1 p2)
+                (if p2
+                    (tokens str test p2)
+                    nil)))
+        nil)))
+
+;; => TOKENS
+
+;; Эта функция выделяет знаки из строки
+;; tokens принимает строку и предикат, и возвращает список подстрок,
+;; удовлетворяющих предикату
+
+(tokens "ab12 3cde.f" #'alpha-char-p 0)
+
+;; => ("ab" "cde" "f")
+
+;; В данном случае alpha-char-p - это предикат, удовлетворяющий буквенным знакам
+
+(defun constituent (c)
+  (and (graphic-char-p c)
+       (not (char= c #\ ))))
+
+;; => CONSTITUENT
+
+;; Данная функция будет использоваться в качестве предиката для tokens
+;; graphic-char-p - предикат, удовлетворяющий печатным знакам, к которым
+;; также относится и пробел
+
+(tokens "ab12 3cde.fgh" #'constituent 0)
+
+;; => ("ab12" "3cde.fgh")
+
+;; В данном случае пробелы мы должны исключить, что делается в последнем выражении
+;; при определении функции constituent
+
+(defun parse-date (str)
+  (let ((toks (tokens str #'constituent 0)))
+    (list (parse-integer (first toks))
+          (parse-month (second toks))
+          (parse-integer (third toks)))))
+
+;; => PARSE-DATE
+
+(defconstant month-names
+  #("jan" "feb" "mar" "apr" "may" "jun"
+    "jul" "aug" "sep" "oct" "nov" "dec"))
+
+;; => MONTH-NAMES
+
+(defun parse-month (str)
+  (let ((p (position str month-names
+                     :test #'string-equal)))
+    (if p
+        (+ p 1)
+        nil)))
+
+;; => PARSE-MONTH
 
 
 
