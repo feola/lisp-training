@@ -58,7 +58,8 @@ p
 ;; => POLEMIC
 
 ;; CL-USER> (make-polemic)
-;; What kind of polemic was it?
+;; What kind of polemic was it? scathing
+;; #S(POLEMIC :TYPE SCATHING :EFFECT NIL)
 
 ;; Более развитый вариант определения структуры point:
 ;; Здесь можно управлять способом отображения структуры и
@@ -84,3 +85,50 @@ p
 (make-point)
 
 ;; => #<0, 0>
+
+;;---------------------------------------------------
+;; ПРИМЕР - ДВОИЧНЫЕ ДЕРЕВЬЯ ПОИСКА
+;;---------------------------------------------------
+;; Можно рассмотреть метод хранения объектов в двоичном дереве
+;; поиска - BST
+;; В нашем случае BST - это бинарное дерево, в котором для каждого элемента и
+;; функции < соблюдается правило: левый дочерний элемент < родителя, правый >
+
+(defstruct (node (:print-function
+                  (lambda (n s d)
+                    (format s "#<~A>" (node-elt n)))))
+  elt (l nil) (r nil))
+
+(defun bst-insert (obj bst <)
+  (if (null bst)
+      (make-node :elt obj)
+      (let ((elt (node-elt bst)))
+        (if (eql obj elt)
+            bst
+            (if (funcall < obj elt)
+                (make-node
+                 :elt elt
+                 :l (bst-insert obj (node-l bst) <)
+                 :r (node-r bst))
+                (make-node
+                 :elt elt
+                 :r (bst-insert obj (node-r bst) <)
+                 :l (node-l bst)))))))
+
+(defun bst-find (obj bst <)
+  (if (null bst)
+      nil
+      (let ((elt (node-elt bst)))
+        (if (eql obj elt)
+            bst
+            (if (funcall < obj elt)
+                (bst-find obj (node-l bst) <)
+                (bst-find obj (node-r bst) <))))))
+
+(defun bst-min (bst)
+  (and bst
+       (or (bst-min (node-l bst)) bst)))
+
+(defun bst-max (bst)
+  (and bst
+       (or (bst-max (node-r bst)) bst)))
