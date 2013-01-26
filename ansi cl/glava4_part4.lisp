@@ -99,6 +99,11 @@ p
                     (format s "#<~A>" (node-elt n)))))
   elt (l nil) (r nil))
 
+;; => NODE
+
+;; Здесь задаётся структура - указывается функция печати для узла,
+;; поле самого узла и его потомков - левого и правого
+
 (defun bst-insert (obj bst <)
   (if (null bst)
       (make-node :elt obj)
@@ -115,6 +120,23 @@ p
                  :r (bst-insert obj (node-r bst) <)
                  :l (node-l bst)))))))
 
+;; => BST-INSERT
+
+;; Функция bst-insert позволяет построить дерево
+;; Она принимает 3 аргумента - объект (список элементов), дерево и
+;; функцию упорядочения
+
+(setf nums nil)
+
+;; => NIL
+
+(dolist (x '(5 8 4 2 1 9 6 7 3))
+  (setf nums (bst-insert x nums #'<)))
+
+;; => NIL
+
+;; Теперь создано соответствующее дерево
+
 (defun bst-find (obj bst <)
   (if (null bst)
       nil
@@ -125,10 +147,45 @@ p
                 (bst-find obj (node-l bst) <)
                 (bst-find obj (node-r bst) <))))))
 
+;; => BST-FIND
+
+;; Функция bst-find ищет объекты в дереве, она принимает те же аргументы,
+;; что bst-insert
+;; Возвращает не сам элемент, а его поддерево
+
+(bst-find 12 nums #'<)
+
+;; => NIL
+;; Т. к. числа 12 в дереве нет
+
+(bst-find 4 nums #'<)
+
+;; => #<4>
+
 (defun bst-min (bst)
   (and bst
        (or (bst-min (node-l bst)) bst)))
 
+;; => BST-MIN
+
+;; Функция bst-min позволяет найти минимальный элемент дерева
+;; Чтобы найти минимальный элемент, нужно идти по дереву, всегда выбирая
+;; левую ветвь
+
+(bst-min nums)
+
+;; => #<1>
+
 (defun bst-max (bst)
   (and bst
        (or (bst-max (node-r bst)) bst)))
+
+;; => BST-MAX
+
+;; Функция bst-min позволяет найти максимальный элемент дерева
+;; Чтобы найти максимальный элемент, нужно идти по дереву, всегда выбирая
+;; правую ветвь
+
+(bst-max nums)
+
+;; => #<9>
