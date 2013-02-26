@@ -8,10 +8,10 @@
 (defmacro with-lock (name &body body)
   `(defun my-print (name)
      (acquire-lock *lock* t)
-     ,body
+     ,@body
      (release-lock *lock*)))
 
-(with-lock "a" format *so* "~%~A: ~A" name *i*)
+(with-lock "a" (format *so* "~%~A: ~A" name *i*))
 ;; Раскрывается в
 ;; => (PROGN
 ;;      (EVAL-WHEN (:COMPILE-TOPLEVEL) (SB-C:%COMPILER-DEFUN 'MY-PRINT 'NIL T))
