@@ -5,11 +5,18 @@
 ;; на 90 градусов по часовой стрелке
 
 (defun quarter-turn (x)
-  (make-array (array-dimensions x))
-  (setf (aref x 0 0) (aref x 1 0))
-  x)
+  (progn
+    (setf y
+          (make-array (array-dimensions x)))
+    (setf (aref y 0 0) (aref x 1 0))
+    (setf (aref y 0 1) (aref x 0 0))
+    (setf (aref y 1 1) (aref x 0 1))
+    (setf (aref y 1 0) (aref x 1 1)))
+  y)
 
 (quarter-turn #2A((a b) (c d)))
 
+;; => #2A((C A) (D B))
 
-
+;; Получилось, но это работает только для массива 2х2
+;; Как сделать, чтобы работало для массива любой размерности?
